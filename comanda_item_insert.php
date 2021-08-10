@@ -17,22 +17,33 @@ if($qtde <= 0){
 
 $_SESSION['idpedido'] = $idpedido;
 
-$multi = $preco * $qtde;
+// $multi = $preco * $qtde;
 
-$resultado = $resultado + $multi;
+// $resultado = $resultado + $multi;
 
-// SELECT QUE PEGA RESULTADO COMO VARIAVEL //
-$sql = "select sum(valor*quantidade) as total from tbpedidos_item where idpedido = '$idpedido' ";
+// // SELECT QUE PEGA RESULTADO COMO VARIAVEL //
+// $sql = "select sum(valor*quantidade) as total from tbpedidos_item where idpedido = '$idpedido' ";
+// $rstotvenda = mysqli_query($conexao, $sql);
+// $result = mysqli_fetch_array($rstotvenda);
+// $totalvenda = $result['total'];
+
+
+// $total = $totalvenda + $resultado;
+
+$sql = "SELECT c.iditem,c.quantidade, count(*) as existe FROM tbpedidos_item c where idpedido = '$idpedido' and referencia = '$referencia';";
 $rstotvenda = mysqli_query($conexao, $sql);
-$result = mysqli_fetch_array($rstotvenda);
-$totalvenda = $result['total'];
+$row = mysqli_fetch_array($rstotvenda);
 
+if ($row['existe'] >= 1) {
+    $qtde = $row['quantidade'] + $qtde;
+    $valor = $qtde * $preco;
+    $iditem = $row['iditem'];
+    $sql = "UPDATE tbpedidos_item SET referencia = '$referencia', descricao = '$descricao', quantidade = '$qtde', valor = '$valor' WHERE idpedido = '$idpedido' and iditem= '$iditem' ";
+} else {
+    $sql = "INSERT INTO tbpedidos_item (idpedido, referencia, descricao, quantidade, valor) VALUES ('$idpedido', '$referencia', '$descricao', '$qtde', '$preco')";
+}
 
-$total = $totalvenda + $resultado;
-
-
-
-$sql = "INSERT INTO tbpedidos_item (idpedido, referencia, descricao, quantidade, valor) VALUES ('$idpedido', '$referencia', '$descricao', '$qtde', '$preco')";
+// $sql = "INSERT INTO tbpedidos_item (idpedido, referencia, descricao, quantidade, valor) VALUES ('$idpedido', '$referencia', '$descricao', '$qtde', '$preco')";
 
 if($conexao->query($sql) === TRUE) {
     $_SESSION['status_prod_add'] = "Produto adicionado!";

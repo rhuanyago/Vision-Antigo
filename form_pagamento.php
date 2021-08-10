@@ -68,6 +68,11 @@ $row_rscli = mysqli_fetch_array($rscli);
 
 
 </head>
+<style>
+    .oculto {
+        display: none;
+    }
+</style>
 
 <body>
 
@@ -126,7 +131,7 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                     <div class="col-sm-3">
                                                         <div class="form-group">
                                                             <label class="control-label">Valor Consumido</label>
-                                                            <input type="text" name="preco" class="form-control text-weight-bold text-danger text-right" readonly value="R$ <?php echo number_format($row_rscli['valor'],2, ",", ".") ?>">
+                                                            <input type="text" name="preco" class="form-control text-weight-bold text-danger text-right" readonly value="R$ <?php echo number_format($row_rscli['valor'], 2, ",", ".") ?>">
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-3">
@@ -147,12 +152,12 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                         <div class="col-sm-4">
                                                             <div class="form-group">
                                                                 <label class="control-label">Formas</label>
-                                                                <select id="forma" name="forma" class="form-control">
+                                                                <select id="forma" name="forma" onchange="mudaTipo()" class="form-control">
                                                                     <option value="">------------------------</option>
                                                                     <?php
-                                                                        $sql = "SELECT * from tbformas_pagamento";
-                                                                        $rsforma = mysqli_query($conexao, $sql);
-                                                                        while ($rows_rsforma = mysqli_fetch_assoc($rsforma)) { ?>
+                                                                    $sql = "SELECT * from tbformas_pagamento";
+                                                                    $rsforma = mysqli_query($conexao, $sql);
+                                                                    while ($rows_rsforma = mysqli_fetch_assoc($rsforma)) { ?>
                                                                         <option value="<?php echo $rows_rsforma['idforma_pagamento'] ?>"><?php echo $rows_rsforma['forma_descricao'] ?></option>
                                                                     <?php } ?>
                                                                 </select><br>
@@ -160,13 +165,13 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                                     <div class="col-sm-6">
                                                                         <div class="form-group">
                                                                             <label class="control-label">Valor Pago</label>
-                                                                            <input type="text" name="valor" id="valor" inputmode="numeric" onkeyup="valorreais(this);" min="0" max="<?php echo $row_rscli['valor'] ?>"   class="form-control text-weight-bold text-danger col-sm-12" value="0"><br>
+                                                                            <input type="text" name="valor" id="valor" inputmode="numeric" onkeyup="valorreais(this);" min="0" max="<?php echo $row_rscli['valor'] ?>" class="form-control text-weight-bold text-danger col-sm-12" value="0"><br>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-sm-6">
+                                                                    <div class="col-sm-6" id="valorRecebido">
                                                                         <div class="form-group">
                                                                             <label class="control-label">Valor Recebido R$</label>
-                                                                            <input type="text" name="valorrecebido" inputmode="numeric" id="valorrecebido" onkeyup="valorreais(this);" min="0"  class="form-control text-weight-bold text-dark col-sm-12" value="0">
+                                                                            <input type="text" name="valorrecebido" inputmode="numeric" id="valorrecebido" onkeyup="valorreais(this);" min="0" class="form-control text-weight-bold text-dark col-sm-12" value="0">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -176,24 +181,25 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                                 <div class="col-lg-12">
                                                                     <div class="center">
                                                                         <?php
-                                                                            if (isset($_SESSION['status_forma'])) :
-                                                                                ?>
+                                                                        if (isset($_SESSION['status_forma'])) :
+                                                                        ?>
                                                                             <div class="alert alert-success">
                                                                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
                                                                                 <strong><?php echo $_SESSION['status_forma'] ?> </strong><br>
                                                                             </div>
                                                                         <?php
-                                                                            endif;
-                                                                            unset($_SESSION['status_forma']);
-                                                                            ?>
+                                                                        endif;
+                                                                        unset($_SESSION['status_forma']);
+                                                                        ?>
                                                                     </div>
                                                                 </div>
-                                                            <?php } else { } ?>
+                                                            <?php } else {
+                                                        } ?>
                                                             <div class="col-lg-12">
                                                                 <div class="center">
                                                                     <?php
                                                                     if (isset($_SESSION['msg_erro_forma'])) :
-                                                                        ?>
+                                                                    ?>
                                                                         <div class="alert alert-danger">
                                                                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true"> ×</button>
                                                                             <strong><?php echo $_SESSION['msg_erro_forma'] ?></strong>
@@ -215,8 +221,9 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                                             <th>Forma Pagamento</th>
                                                                             <th>Valor</th>
                                                                             <th>Troco</th>
-                                                                            <?php if ($row_rscli['status'] == "F" ) { } else {?>
-                                                                            <th class="text-center">Ações</th>
+                                                                            <?php if ($row_rscli['status'] == "F") {
+                                                                            } else { ?>
+                                                                                <th class="text-center">Ações</th>
                                                                             <?php  } ?>
                                                                         </tr>
                                                                     </thead>
@@ -230,16 +237,17 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                                             <tr style="font-size:14px;">
                                                                                 <td><?php echo $rows_rsforma['idforma_pagamento'] ?></td>
                                                                                 <td><?php echo $rows_rsforma['forma_descricao'] ?></td>
-                                                                                <td>R$ <?php echo number_format($rows_rsforma['valor'],2,",", ".") ?></td>
+                                                                                <td>R$ <?php echo number_format($rows_rsforma['valor'], 2, ",", ".") ?></td>
                                                                                 <?php if ($rows_rsforma['troco'] < 0) { ?>
-                                                                                    <td>R$ <?php echo number_format($rows_rsforma['troco'],2,",", ".") ?></td>
+                                                                                    <td>R$ <?php echo number_format($rows_rsforma['troco'], 2, ",", ".") ?></td>
                                                                                 <?php } else { ?>
                                                                                     <td></td>
                                                                                 <?php } ?>
-                                                                                <?php if ($row_rscli['status'] == "F" ) { } else {?>
-                                                                                <td class="actions-hover actions-fade text-center">
-                                                                                    <a href="form_pagamento_excluir.php?idpedido=<?php echo $rows_rsforma['idpedido'] ?>&idforma=<?php echo $rows_rsforma['idforma'] ?>" class="delete-row"><i class="far fa-trash-alt"></i></a>
-                                                                                </td>
+                                                                                <?php if ($row_rscli['status'] == "F") {
+                                                                                } else { ?>
+                                                                                    <td class="actions-hover actions-fade text-center">
+                                                                                        <a href="form_pagamento_excluir.php?idpedido=<?php echo $rows_rsforma['idpedido'] ?>&idforma=<?php echo $rows_rsforma['idforma'] ?>" class="delete-row"><i class="far fa-trash-alt"></i></a>
+                                                                                    </td>
                                                                                 <?php  } ?>
                                                                             </tr>
                                                                         <?php  } ?>
@@ -254,7 +262,7 @@ $row_rscli = mysqli_fetch_array($rscli);
 
                                                                         $total = $totalformas;
 
-                                                                        $diferença = $row_rscli['valor'] - $total;
+                                                                        $diferenca = $row_rscli['valor'] - $total;
 
                                                                         ?>
 
@@ -264,18 +272,20 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                                         <td class="text-right" style="font-size:14px;"><b>Total<b></td>
                                                                         <td class="text-left" style="font-size:14px;"><b>R$ <?php echo number_format($total, 2, ",", ".") ?><b></td>
                                                                         <td></td>
-                                                                        <?php if ($row_rscli['status'] == "F" ) { } else {?>
-                                                                        <td></td>
+                                                                        <?php if ($row_rscli['status'] == "F") {
+                                                                        } else { ?>
+                                                                            <td></td>
                                                                         <?php  } ?>
                                                                     </tr>
                                                                     <tr>
-                                                                    <?php if ($row_rscli['status'] == "F" ) { } else {?>
-                                                                        <td></td>
-                                                                        
-                                                                        <td class="text-right" style="font-size:14px;color:red"><b>Faltam<b></td>
-                                                                        <td class="text-left" style="font-size:14px;"><b>R$ <?php echo  number_format($diferença, 2, ",", ".") ?><b></td>
-                                                                        <td></td>
-                                                                        <td></td>
+                                                                        <?php if ($row_rscli['status'] == "F") {
+                                                                        } else { ?>
+                                                                            <td></td>
+
+                                                                            <td class="text-right" style="font-size:14px;color:red"><b>Faltam<b></td>
+                                                                            <td class="text-left" style="font-size:14px;"><b>R$ <?php echo  number_format($diferenca, 2, ",", ".") ?><b></td>
+                                                                            <td></td>
+                                                                            <td></td>
                                                                         <?php  } ?>
                                                                     </tr>
                                                                 </table>
@@ -301,7 +311,8 @@ $row_rscli = mysqli_fetch_array($rscli);
                                                     </div>
                                                 <?php } ?>
 
-                                            <?php } else { } ?>
+                                            <?php } else {
+                                            } ?>
 
                                         </section>
                                     </div>
@@ -367,28 +378,38 @@ $row_rscli = mysqli_fetch_array($rscli);
     <!-- Analytics to Track Preview Website -->
 
     <script src="js/examples/examples.advanced.form.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function(){
-                $('input[type="text"]').each(function(){
-                    var val = $(this).val().replace(',','.');
-                    $(this).val(val);
-                });
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('input[type="text"]').each(function() {
+                var val = $(this).val().replace(',', '.');
+                $(this).val(val);
             });
-        
-        </script>
+        });
+    </script>
 
     <script type="text/javascript">
-    function SubstituiVirgulaPorPonto(campo){	
-        campo.value = campo.value.replace(/,/gi, ".");
-    }    
+        function SubstituiVirgulaPorPonto(campo) {
+            campo.value = campo.value.replace(/,/gi, ".");
+        }
     </script>
-    
+
     <script type="text/javascript">
         function valorreais(i) {
-            var v = i.value.replace(/\D/g,'');
-            v = (v/100).toFixed(2) + '';
+            var v = i.value.replace(/\D/g, '');
+            v = (v / 100).toFixed(2) + '';
             v = v.replace(".", ",");
             i.value = v;
+        }
+
+        mudaTipo();
+        function mudaTipo() {
+            var exibe = document.getElementById('forma').value;
+            if (exibe == 'R$') {
+                document.getElementById('valorRecebido').classList.remove('oculto');
+            } else {
+                // document.getElementById('user-pass').classList.remove('oculto');
+                document.getElementById('valorRecebido').classList.add('oculto');
+            }
         }
     </script>
 

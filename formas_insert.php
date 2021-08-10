@@ -24,13 +24,37 @@ $sql = "select * from tbpedido_pagamento where forma = '$forma' AND idpedido = '
 $rsforma_verifica = mysqli_query($conexao, $sql);
 $row = mysqli_fetch_assoc($rsforma_verifica);
 
+$sql2 = "select sum(valor) as total from tbpedido_pagamento where idpedido = '$idpedido' ";
+$rstotformas = mysqli_query($conexao, $sql2);
+$result = mysqli_fetch_array($rstotformas);
+$totalformas = $result['total'];
+
+$total = $totalformas;
+
+$sql3 = "SELECT a.nome,b.* FROM tbclientes a, tbpedidos b where a.reg = b.reg and idpedido = '$idpedido' ";
+$rscli = mysqli_query($conexao, $sql3);
+$row_rscli = mysqli_fetch_array($rscli);
+
+$diferenca = $row_rscli['valor'] - $total;
+
 if(($valor == "0") or ($forma == "")) {
     $_SESSION['msg_erro_forma'] = "Insira um Valor ou Forma de Pagamento em Branco!";
+    header('Location: form_pagamento.php');
+    exit;
+}else if((int) $valor > (int)$diferenca){
+
+    $_SESSION['msg_erro_forma'] = "Valor inserido é maior que o valor que falta!";
     header('Location: form_pagamento.php');
     exit;
 }else{
 
     if($forma == "R$"){
+
+        if ($valorrecebido < $valor) {
+            $_SESSION['msg_erro_forma'] = "Valor Recebido não pode ser menor que o Valor à pagar!";
+            header('Location: form_pagamento.php');
+            exit;
+        }
 
         $sql = "INSERT INTO tbpedido_pagamento (idpedido, forma, valor, troco, tipo) VALUES ('$idpedido', '$forma', '$valor', '$troco', '$tipo') ";
 

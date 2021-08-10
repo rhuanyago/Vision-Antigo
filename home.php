@@ -74,7 +74,7 @@ if ($_SESSION['logado'] == md5('@wew67434$%#@@947@@#$@@!#54798#11a23@@dsa@!')) {
                             <section class="card">
                                 <div class="text-left">
                                     <?php if ($row_caixa['status'] == "A") {  ?>
-                                        <?php if ($_SESSION['permissao'] == 1  or $_SESSION['permissao'] == 4 or $_SESSION['permissao'] == 2) { ?>
+                                        <?php if ($_SESSION['permissao'] == 1  or $_SESSION['permissao'] == 4 or $_SESSION['permissao'] == 3) { ?>
                                             <a class="btn btn-dark text-white" href="escolhe_venda.php" style="border:none;"><i class="fas fa-plus"></i> Novo Pedido</a>
                                             <a class="btn btn-danger text-white" href="pedidos_finalizados.php" style="border:none;"><i class="fas fa-check-circle"></i> Pedidos Finalizados</a>
                                         <?php } ?>

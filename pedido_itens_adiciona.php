@@ -8,7 +8,7 @@ if (isset($_GET['idpedido'])) {
     $idpedido = $_SESSION['idpedido'];
 }
 
-$sql = "SELECT c.* from tbproduto b, tbpedidos_item c where b.descricao = c.descricao and c.idpedido = '$idpedido' order by iditem  ";
+$sql = "SELECT c.*, b.preco from tbproduto b, tbpedidos_item c where b.descricao = c.descricao and c.idpedido = '$idpedido' and b.habilitado='S' order by iditem ";
 $result = mysqli_query($conexao, $sql);
 
 $sql2 = "SELECT * from tbpedidos c where c.idpedido = '$idpedido';";

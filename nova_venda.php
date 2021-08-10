@@ -11,7 +11,7 @@ $_SESSION['idpedido'] = $resultado['ultimo'];
 
 $idpedido = $_SESSION['idpedido'];
 
-$sql = "SELECT c.* from tbproduto b, tbpedidos_item c where b.descricao = c.descricao and c.idpedido = '$idpedido' and b.habilitado='S' order by iditem  ";
+$sql = "SELECT c.*, b.preco from tbproduto b, tbpedidos_item c where b.descricao = c.descricao and c.idpedido = '$idpedido' and b.habilitado='S' order by iditem ";
 $result = mysqli_query($conexao, $sql);
 
 
@@ -239,13 +239,13 @@ $result = mysqli_query($conexao, $sql);
                                                                 ?>
                                                                 <?php while ($rows_rsitens = mysqli_fetch_array($result)) {                                                                     
                                                                     $bruto = 0;
-                                                                    $bruto = $rows_rsitens['valor'] *  $rows_rsitens['quantidade'];  
+                                                                    $bruto = $rows_rsitens['preco'] *  $rows_rsitens['quantidade'];  
                                                                     ?>
                                                                     <tr style="font-size:14px;">
                                                                         <td><?php echo $rows_rsitens['referencia'] ?></td>
                                                                         <td><?php echo $rows_rsitens['descricao'] ?></td>
                                                                         <td class="text-center"><?php echo $rows_rsitens['quantidade'] ?></td>
-                                                                        <td class="text-center"><?php echo number_format($rows_rsitens['valor'], 2, ",", ".");?></td>
+                                                                        <td class="text-center"><?php echo number_format($rows_rsitens['preco'], 2, ",", ".");?></td>
                                                                         <td class="text-center"><?php echo number_format($bruto, 2, ",", ".");?></td>
                                                                         <td class="actions-hover actions-fade text-center ">
                                                                             <a href="venda_itens_excluir.php?idpedido=<?php echo $rows_rsitens['idpedido'] ?>&iditem=<?php echo $rows_rsitens['iditem'] ?>" class="btn btn-danger text-white"><i class="far fa-trash-alt"></i></a>
@@ -257,7 +257,7 @@ $result = mysqli_query($conexao, $sql);
 
                                                                     $qtde = $qtde + $rows_rsitens['quantidade'];
 
-                                                                    $multi = $rows_rsitens['valor'] * $rows_rsitens['quantidade'];
+                                                                    $multi = $rows_rsitens['preco'] * $rows_rsitens['quantidade'];
 
                                                                     $resultado = $resultado + $multi;
                                                                 } ?>
@@ -389,6 +389,7 @@ $result = mysqli_query($conexao, $sql);
             });
 
         });
+        
     </script>
 
     <script>
